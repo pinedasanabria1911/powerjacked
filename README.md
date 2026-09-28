@@ -65,16 +65,29 @@ device.
 
 ## Session types
 
-The session picker carries the program's own days plus two fixtures that are not lifting
-and are not editable in the program:
+The session picker carries the gym program's own days, a second **band program**'s own
+days, and two fixtures that are not lifting and are not editable in either program:
 
 - **Z2, Zone 2 cardio.** Minutes, average HR and max HR. No sets, no exercises.
 - **MOB, Mobility.** Lower body, upper body, or both.
 
-Average and max HR sit on a lifting session too, next to the Zone 2 minutes you ride after
-weights, so a bike block logged either way records the same three numbers. Cardio and
-mobility days do not count toward the weekly session floor, which is about lifting; the
-dashboard tile reports them beside it. They export as `cardio.csv` and `mobility.csv`.
+Average and max HR sit on a lifting or band session too, next to the Zone 2 minutes you
+ride after training, so a bike block logged either way records the same three numbers.
+Cardio and mobility days do not count toward the weekly session floor, which is about
+resistance training; the dashboard tile reports them beside it. They export as
+`cardio.csv` and `mobility.csv`.
+
+## Band program
+
+Setup → Band program is a second, independent set of sessions, edited the same way as
+the gym program but never merged into it. It exists for stretches where the gym isn't
+an option — travel, a rehab block — without disturbing the gym program's own day codes,
+exercises or weekly volume targets. Band sessions log full sets and reps like a gym
+session, count toward the same weekly session floor and target, and get their own
+progression suggestions; `step` is read as the band's rated kg, so the progression note
+reads as the next band to stack once the rep range is maxed out. The two programs'
+weekly volume targets are kept separate on purpose: they represent alternatives, not an
+addition, so summing them would double-count a week where only one is actually run.
 
 ## Supersets
 

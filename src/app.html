@@ -584,6 +584,20 @@ nav button[aria-current="true"]{background:var(--accent-soft);color:var(--accent
       </div>
 
       <div class="card">
+        <header><span class="lbl">Band program</span><span class="note">separate from the gym program above</span></header>
+        <p class="hint">A second, independent set of sessions for band-only training — travel, a rehab
+          block, anywhere the gym isn't an option. Step is the band's rated kg; the progression note
+          reads it as the next weight to stack once the rep range is maxed out. These sessions count
+          toward the weekly session floor and target the same as the gym program, but their sets are
+          not counted against the gym program's weekly volume targets, and vice versa.</p>
+        <div class="stack" id="bandEdit"></div>
+        <div class="btnrow">
+          <button class="btn" id="bpSave" type="button">Save band program</button>
+          <button class="btn ghost" id="bpAddDay" type="button">+ Session</button>
+        </div>
+      </div>
+
+      <div class="card">
         <header><span class="lbl">Sync</span><span class="note" id="syncNote">not configured</span></header>
         <p class="hint">Your data lives in a private GitHub repository. Every save commits there,
           so the repo is the record and this browser is only a cache. The token is stored on this
@@ -705,6 +719,7 @@ function save(){ saveLocal(); if(typeof schedulePush === "function") schedulePus
 S = load();
 if(!S.meta) S.meta = {};
 if(!S.rehab) S.rehab = [];
+if(!S.bandProgram) S.bandProgram = [];
 
 /* ---------- helpers ---------- */
 const byDateAsc = (a,b)=> a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
@@ -747,10 +762,17 @@ const EXTRA_DAYS = [
   {id:"Z2",  name:"Zone 2 cardio", kind:"cardio"},
   {id:"MOB", name:"Mobility",      kind:"mobility"},
 ];
-const dayDef = id => S.program.find(d=>d.id===id) || EXTRA_DAYS.find(d=>d.id===id);
+// the band program is a second, independent set of sessions (its own days, its own
+// exercises) kept apart from the gym program so neither one's weekly volume target
+// or "not logged" flags get diluted by the other
+const dayDef = id => S.program.find(d=>d.id===id) || (S.bandProgram||[]).find(d=>d.id===id)
+  || EXTRA_DAYS.find(d=>d.id===id);
 // a program day always wins the id, so a collision costs the fixture, never the program
 const dayKind = id => S.program.some(d=>d.id===id) ? "lift"
+  : (S.bandProgram||[]).some(d=>d.id===id) ? "band"
   : (EXTRA_DAYS.find(d=>d.id===id) || {}).kind || "lift";
+// both "lift" and "band" days log real sets and count toward the session floor/target
+const isTrainingKind = k => k === "lift" || k === "band";
 function mobilityText(w){
   const p = [];
   if(w.mobility && w.mobility.lower) p.push("lower");
@@ -831,7 +853,7 @@ const lastSessionFor = id => [...S.workouts].reverse().find(w=>w.day===id) || nu
 // Reps-first: max the range across every set, then add a set, then add load.
 function progressionCalls(){
   const out = [];
-  S.program.forEach(day=>{
+  [...S.program, ...(S.bandProgram||[])].forEach(day=>{
     const s = lastSessionFor(day.id); if(!s) return;
     day.ex.forEach(def=>{
       const e = s.exercises.find(x=>x.name===def.name);
@@ -980,9 +1002,12 @@ function renderOverview(){
   const protHit = n7.filter(d=>d.protein_g >= pt).length;
 
   const t0 = shiftDays(todayISO(), -6);
-  // the floor and target are about lifting; cardio and mobility are counted beside it
+  // the floor and target are about resistance training, gym or band; cardio and
+  // mobility are counted beside it, and gym vs band gets its own breakdown
   const all7 = S.workouts.filter(w=>w.date >= t0);
-  const w7 = all7.filter(w=>dayKind(w.day) === "lift");
+  const w7 = all7.filter(w=>isTrainingKind(dayKind(w.day)));
+  const bandCt = all7.filter(w=>dayKind(w.day)==="band").length;
+  const gymBandSplit = bandCt ? " (gym "+(w7.length-bandCt)+", band "+bandCt+")" : "";
   const extra7 = [["cardio","cardio"],["mobility","mobility"]]
     .map(([k,lbl])=>{ const n = all7.filter(w=>dayKind(w.day)===k).length;
       return n ? "+"+n+" "+lbl : ""; }).filter(Boolean).join(", ");
@@ -999,7 +1024,7 @@ function renderOverview(){
     {lbl:"Sessions 7d", v:String(w7.length), u:"floor "+s.sessionFloor+" · aim "+s.sessionTarget,
      d: (w7.length>=s.sessionTarget ? "target met"
         : w7.length>=s.sessionFloor ? "floor met" : "below floor")
-        + (extra7 ? " · " + extra7 : ""),
+        + gymBandSplit + (extra7 ? " · " + extra7 : ""),
      dc: w7.length>=s.sessionTarget ? "c-good" : w7.length>=s.sessionFloor ? "c-warn" : "c-crit",
      st: w7.length>=s.sessionTarget ? "s-good" : w7.length>=s.sessionFloor ? "s-warn" : "s-crit"}
   ];
@@ -1153,17 +1178,21 @@ function buildDraft(dayId, prefill){
 function renderDaySelect(){
   const sel = document.getElementById("tDay"), keep = sel.value;
   const opt = d => `<option value="${esc(d.id)}">${esc(d.id)} · ${esc(d.name)}</option>`;
-  const extra = EXTRA_DAYS.filter(x=> !S.program.some(d=>d.id===x.id));
-  sel.innerHTML = S.program.map(opt).join("")
+  const band = S.bandProgram || [];
+  const extra = EXTRA_DAYS.filter(x=> !S.program.some(d=>d.id===x.id) && !band.some(d=>d.id===x.id));
+  sel.innerHTML = (band.length ? `<optgroup label="Gym">${S.program.map(opt).join("")}</optgroup>`
+      : S.program.map(opt).join(""))
+    + (band.length ? `<optgroup label="Band">${band.map(opt).join("")}</optgroup>` : "")
     + (extra.length ? `<optgroup label="Not lifting">${extra.map(opt).join("")}</optgroup>` : "");
-  if(S.program.some(d=>d.id===keep) || extra.some(d=>d.id===keep)) sel.value = keep;
+  if(S.program.some(d=>d.id===keep) || band.some(d=>d.id===keep) || extra.some(d=>d.id===keep))
+    sel.value = keep;
 }
 function renderTraining(){
   renderDaySelect();
   const dayId = document.getElementById("tDay").value;
   renderSessionHistory();
   if(!dayId){ document.getElementById("exList").innerHTML = ""; return; }
-  const kind = dayKind(dayId), lift = kind === "lift";
+  const kind = dayKind(dayId), lift = isTrainingKind(kind);
   // the form is one card that changes shape: sets to log, or minutes, or what you mobilised
   document.getElementById("liftPane").classList.toggle("hidden", !lift);
   document.getElementById("mobPane").classList.toggle("hidden", kind !== "mobility");
@@ -1228,7 +1257,7 @@ function renderSessionHistory(){
     const z2 = w.zone2 ? w.zone2+"′" + (w.hrAvg||w.hrMax
       ? " · " + (w.hrAvg||"–") + "/" + (w.hrMax||"–") : "") : "–";
     const kind = dayKind(w.day);
-    if(kind !== "lift") return `<tr><td>${fmtDate(w.date)}</td><td>${esc(w.day)}</td>
+    if(!isTrainingKind(kind)) return `<tr><td>${fmtDate(w.date)}</td><td>${esc(w.day)}</td>
       <td class="det" colspan="3">${esc(kind === "mobility" ? mobilityText(w) : "Zone 2 cardio")}</td>
       <td>${z2}</td></tr>`;
     const rpes = w.exercises.flatMap(e=>e.sets.map(s=>s.rpe)).filter(v=>v);
@@ -1332,6 +1361,7 @@ function mainGroup(g){
 function exerciseGroups(){
   const idx = new Map();
   S.program.forEach(d=> d.ex.forEach(x=>{ if(!idx.has(x.name)) idx.set(x.name, mainGroup(x.group)); }));
+  (S.bandProgram||[]).forEach(d=> d.ex.forEach(x=>{ if(!idx.has(x.name)) idx.set(x.name, mainGroup(x.group)); }));
   S.workouts.forEach(w=> w.exercises.forEach(e=>{ if(!idx.has(e.name)) idx.set(e.name, "Off the program"); }));
   return idx;
 }
@@ -1445,7 +1475,24 @@ function renderSetup(){
     ["Weekly sessions", s.sessionFloor+" floor, "+s.sessionTarget+" target"]
   ].map(r=>`<div class="r"><span class="k">${esc(r[0])}</span><span class="val">${esc(r[1])}</span></div>`).join("");
 
-  document.getElementById("progEdit").innerHTML = S.program.map((d,di)=>`
+  document.getElementById("progEdit").innerHTML = programEditorHTML(S.program);
+  document.getElementById("bandEdit").innerHTML = programEditorHTML(S.bandProgram||[]);
+
+  // flag anything on the permanent exclusion list, in either program
+  const excl = (s.excluded||[]).map(e=>e.toLowerCase().trim()).filter(Boolean);
+  const hits = [];
+  [...S.program, ...(S.bandProgram||[])].forEach(d=>d.ex.forEach(x=>{
+    const nm = x.name.toLowerCase();
+    excl.forEach(e=>{ if(e && nm.includes(e)) hits.push(x.name+" in "+d.id); });
+  }));
+  document.getElementById("exclWarn").innerHTML = hits.length
+    ? `<div class="warnbox"><b>On your exclusion list:</b> ${esc(hits.join("; "))}. Remove it or
+       take it off the exclusion list above.</div>` : "";
+}
+// shared markup for both the gym program editor and the band program editor;
+// di indexes into whichever array the caller wires the click/input handlers to
+function programEditorHTML(days){
+  return days.map((d,di)=>`
     <div class="pday">
       <header>
         <input type="text" value="${esc(d.id)}" data-d="${di}" data-pk="id"
@@ -1486,17 +1533,6 @@ function renderSetup(){
       }).join("")}
       <div class="btnrow"><button class="btn ghost sm" data-add-ex="${di}" type="button">+ Exercise</button></div>
     </div>`).join("");
-
-  // flag anything on the permanent exclusion list
-  const excl = (s.excluded||[]).map(e=>e.toLowerCase().trim()).filter(Boolean);
-  const hits = [];
-  S.program.forEach(d=>d.ex.forEach(x=>{
-    const nm = x.name.toLowerCase();
-    excl.forEach(e=>{ if(e && nm.includes(e)) hits.push(x.name+" in "+d.id); });
-  }));
-  document.getElementById("exclWarn").innerHTML = hits.length
-    ? `<div class="warnbox"><b>On your exclusion list:</b> ${esc(hits.join("; "))}. Remove it or
-       take it off the exclusion list above.</div>` : "";
 }
 
 function renderAll(){
@@ -1602,13 +1638,13 @@ document.getElementById("cSave").addEventListener("click", ()=>{
 document.getElementById("tDay").addEventListener("change", ()=>{ draft = null; renderTraining(); });
 document.getElementById("tPrefill").addEventListener("click", ()=>{
   const day = document.getElementById("tDay").value;
-  if(dayKind(day) !== "lift") return;   // nothing to prefill on a cardio or mobility day
+  if(!isTrainingKind(dayKind(day))) return;   // nothing to prefill on a cardio or mobility day
   draft = buildDraft(day, true);
   renderTraining(); toast("Prefilled from last session");
 });
 document.getElementById("tClear").addEventListener("click", ()=>{
   const day = document.getElementById("tDay").value;
-  if(dayKind(day) !== "lift") return;
+  if(!isTrainingKind(dayKind(day))) return;
   draft = buildDraft(day, false); renderTraining();
 });
 document.getElementById("exList").addEventListener("input", e=>{
@@ -1714,62 +1750,75 @@ document.getElementById("sSave").addEventListener("click", ()=>{
   save(); renderAll();
 });
 
-/* ---------- setup: program ---------- */
-document.getElementById("progEdit").addEventListener("input", e=>{
-  const t = e.target, di = +t.dataset.d;
-  if(t.dataset.pk){ S.program[di][t.dataset.pk] = t.value; return; }
-  if(t.dataset.xk){
-    const x = S.program[di].ex[+t.dataset.x], k = t.dataset.xk;
-    x[k] = (k === "name" || k === "group") ? t.value : (parseFloat(t.value) || 0);
-  }
-});
-document.getElementById("progEdit").addEventListener("click", e=>{
-  const addEx = e.target.closest("[data-add-ex]");
-  if(addEx){ S.program[+addEx.dataset.addEx].ex.push(
-      {name:"New exercise", sets:3, lo:8, hi:10, group:"", step:5});
-    save(); renderSetup(); return; }
-  const rmEx = e.target.closest("[data-rm-ex]");
-  if(rmEx){ const [di,xi] = rmEx.dataset.rmEx.split(":").map(Number);
-    S.program[di].ex.splice(xi,1); ssNormalize(S.program[di].ex);
-    save(); renderSetup(); return; }
-  const mv = e.target.closest("[data-mv]");
-  if(mv){ const [di,xi,dir] = mv.dataset.mv.split(":").map(Number);
-    const arr = S.program[di].ex, to = xi+dir;
-    if(to >= 0 && to < arr.length){ const [it] = arr.splice(xi,1); arr.splice(to,0,it); }
-    ssNormalize(arr); save(); renderSetup(); return; }
-  // pairing set here is program-level: it seeds every session logged from now on.
-  // A session already open keeps whatever it has; the change lands on the next one.
-  const pss = e.target.closest("[data-pss]");
-  if(pss){ const [di,xi] = pss.dataset.pss.split(":").map(Number);
-    const x = S.program[di].ex[xi];
-    if(x.ss) delete x.ss; else x.ss = true;
-    save(); renderSetup();
-    toast(x.ss ? "Superset saved to the program" : "Superset removed from the program"); return; }
-  const rmDay = e.target.closest("[data-rm-day]");
-  if(rmDay){
-    if(S.program.length <= 1){ toast("Keep at least one session"); return; }
-    S.program.splice(+rmDay.dataset.rmDay, 1); draft = null; save(); renderAll(); }
-});
-document.getElementById("pAddDay").addEventListener("click", ()=>{
-  const used = new Set(S.program.map(d=>d.id));
-  const id = "ABCDEFGH".split("").find(c=>!used.has(c)) || "X"+S.program.length;
-  S.program.push({id, name:"Full Body "+id, ex:[
-    {name:"New exercise", sets:3, lo:8, hi:10, group:"", step:5}]});
-  save(); renderAll(); toast("Session "+id+" added");
-});
-document.getElementById("pSave").addEventListener("click", ()=>{
-  const ids = S.program.map(d=>d.id.trim());
-  if(ids.some(x=>!x)){ toast("Every session needs a code"); return; }
-  if(new Set(ids).size !== ids.length){ toast("Session codes must be unique"); return; }
-  const taken = EXTRA_DAYS.map(d=>d.id);
-  if(ids.some(x=> taken.includes(x.toUpperCase()))){
-    toast(taken.join(" and ") + " are the cardio and mobility sessions"); return; }
-  S.program.forEach(d=>{ d.id = d.id.trim(); ssNormalize(d.ex);
-    d.ex.forEach(x=>{ if(x.hi < x.lo) x.hi = x.lo; x.sets = Math.max(1, Math.round(x.sets)); }); });
-  draft = null;
-  S.meta = Object.assign({}, S.meta, {configAt: Date.now()});
-  save(); renderAll(); toast("Program saved");
-});
+/* ---------- setup: program editors (gym and band share this logic) ---------- */
+// getArr/getOther are called fresh every time, never cached, so this keeps working
+// after S is replaced wholesale by a reset, a pull, or a merge
+function wireProgramEditor(containerId, addBtnId, saveBtnId, getArr, getOther, dayNoun, savedToast){
+  document.getElementById(containerId).addEventListener("input", e=>{
+    const t = e.target, di = +t.dataset.d, arr = getArr();
+    if(t.dataset.pk){ arr[di][t.dataset.pk] = t.value; return; }
+    if(t.dataset.xk){
+      const x = arr[di].ex[+t.dataset.x], k = t.dataset.xk;
+      x[k] = (k === "name" || k === "group") ? t.value : (parseFloat(t.value) || 0);
+    }
+  });
+  document.getElementById(containerId).addEventListener("click", e=>{
+    const arr = getArr();
+    const addEx = e.target.closest("[data-add-ex]");
+    if(addEx){ arr[+addEx.dataset.addEx].ex.push(
+        {name:"New exercise", sets:3, lo:8, hi:10, group:"", step:5});
+      save(); renderSetup(); return; }
+    const rmEx = e.target.closest("[data-rm-ex]");
+    if(rmEx){ const [di,xi] = rmEx.dataset.rmEx.split(":").map(Number);
+      arr[di].ex.splice(xi,1); ssNormalize(arr[di].ex);
+      save(); renderSetup(); return; }
+    const mv = e.target.closest("[data-mv]");
+    if(mv){ const [di,xi,dir] = mv.dataset.mv.split(":").map(Number);
+      const exArr = arr[di].ex, to = xi+dir;
+      if(to >= 0 && to < exArr.length){ const [it] = exArr.splice(xi,1); exArr.splice(to,0,it); }
+      ssNormalize(exArr); save(); renderSetup(); return; }
+    // pairing set here is program-level: it seeds every session logged from now on.
+    // A session already open keeps whatever it has; the change lands on the next one.
+    const pss = e.target.closest("[data-pss]");
+    if(pss){ const [di,xi] = pss.dataset.pss.split(":").map(Number);
+      const x = arr[di].ex[xi];
+      if(x.ss) delete x.ss; else x.ss = true;
+      save(); renderSetup();
+      toast(x.ss ? "Superset saved to the program" : "Superset removed from the program"); return; }
+    const rmDay = e.target.closest("[data-rm-day]");
+    if(rmDay){
+      if(arr.length <= 1){ toast("Keep at least one session"); return; }
+      arr.splice(+rmDay.dataset.rmDay, 1); draft = null; save(); renderAll(); }
+  });
+  document.getElementById(addBtnId).addEventListener("click", ()=>{
+    const arr = getArr();
+    const used = new Set(arr.map(d=>d.id));
+    const id = "ABCDEFGH".split("").find(c=>!used.has(c)) || "X"+arr.length;
+    arr.push({id, name:dayNoun+" "+id, ex:[
+      {name:"New exercise", sets:3, lo:8, hi:10, group:"", step:5}]});
+    save(); renderAll(); toast("Session "+id+" added");
+  });
+  document.getElementById(saveBtnId).addEventListener("click", ()=>{
+    const arr = getArr();
+    const ids = arr.map(d=>d.id.trim());
+    if(ids.some(x=>!x)){ toast("Every session needs a code"); return; }
+    if(new Set(ids).size !== ids.length){ toast("Session codes must be unique"); return; }
+    // a code can't collide with the fixture days or with the other program's codes,
+    // since dayDef/dayKind resolve a single id across all three
+    const taken = EXTRA_DAYS.map(d=>d.id).concat(getOther().map(d=>d.id));
+    if(ids.some(x=> taken.includes(x.toUpperCase()))){
+      toast(taken.join(", ") + " are already used by another session"); return; }
+    arr.forEach(d=>{ d.id = d.id.trim(); ssNormalize(d.ex);
+      d.ex.forEach(x=>{ if(x.hi < x.lo) x.hi = x.lo; x.sets = Math.max(1, Math.round(x.sets)); }); });
+    draft = null;
+    S.meta = Object.assign({}, S.meta, {configAt: Date.now()});
+    save(); renderAll(); toast(savedToast);
+  });
+}
+wireProgramEditor("progEdit", "pAddDay", "pSave",
+  ()=>S.program, ()=>S.bandProgram||[], "Full Body", "Program saved");
+wireProgramEditor("bandEdit", "bpAddDay", "bpSave",
+  ()=>(S.bandProgram || (S.bandProgram = [])), ()=>S.program, "Band", "Band program saved");
 
 /* =========================================================================
    GITHUB SYNC
@@ -1851,9 +1900,10 @@ function mergeState(local, remote){
     (local[k] || []).forEach(r=> map.set(key(r), r));
     out[k] = [...map.values()].sort(byDateAsc);
   });
-  // program and settings are whole-document; keep whichever was edited last
+  // program, band program and settings are whole-document; keep whichever was edited last
   if((remote.meta && remote.meta.configAt || 0) > (local.meta && local.meta.configAt || 0)){
-    out.program = remote.program; out.settings = remote.settings;
+    out.program = remote.program; out.bandProgram = remote.bandProgram || [];
+    out.settings = remote.settings;
   }
   return out;
 }
@@ -1887,11 +1937,12 @@ function renderSync(){
 
 // everything that matters for equality, excluding the write timestamp
 function fingerprint(o){
-  return JSON.stringify([o.program, o.settings, o.weighins, o.nutrition,
+  return JSON.stringify([o.program, o.bandProgram, o.settings, o.weighins, o.nutrition,
     o.workouts, o.rehab, o.bodycomp]);
 }
 function stateForSync(){
-  return {program:S.program, settings:S.settings, weighins:S.weighins, nutrition:S.nutrition,
+  return {program:S.program, bandProgram:S.bandProgram, settings:S.settings,
+    weighins:S.weighins, nutrition:S.nutrition,
     workouts:S.workouts, rehab:S.rehab, bodycomp:S.bodycomp,
     meta: Object.assign({}, S.meta, {writtenAt: new Date().toISOString()})};
 }
@@ -1972,6 +2023,10 @@ addEventListener("offline", renderSync);
 const groupsOf = ex => String(ex.group||"").replace(/\([^)]*\)/g,"")
   .split("/").map(s=>s.trim()).filter(Boolean);
 
+// Gym only, on purpose: the band program is a substitute block, not an addition to
+// the gym week, so summing both would double the target while you are only running
+// one of them. During a band-only stretch this will read every gym group as short;
+// that is expected, not a bug.
 function weeklyVolumeTargets(){
   const t = {};
   S.program.forEach(d=>d.ex.forEach(x=>
@@ -2043,8 +2098,14 @@ function buildSummary(){
 
   const flags = [];
   const doneIds = new Set(w7.map(w=>w.day));
-  S.program.forEach(d=>{ if(!doneIds.has(d.id))
+  // flag missed sessions only for whichever program the week actually trained on;
+  // gym stays the default when neither was touched, matching the old behavior
+  const gymDone = w7.some(w=>dayKind(w.day)==="lift");
+  const bandDone = w7.some(w=>dayKind(w.day)==="band");
+  if(gymDone || !bandDone) S.program.forEach(d=>{ if(!doneIds.has(d.id))
     flags.push("Session " + d.id + " (" + d.name + ") not logged in the last 7 days"); });
+  if(bandDone) (S.bandProgram||[]).forEach(d=>{ if(!doneIds.has(d.id))
+    flags.push("Band session " + d.id + " (" + d.name + ") not logged in the last 7 days"); });
   const fullRehab = r7.filter(d=>d.am && d.pm).length;
   if(fullRehab < r7.length)
     flags.push("Achilles eccentrics completed both doses on " + fullRehab + "/" + r7.length + " days");
@@ -2084,9 +2145,9 @@ function buildSummary(){
       basis_days: m.win
     } : {calorie_target_kcal: kt.kcal, basis: "fallback, under 14 days of paired data"},
     training_last_7_days: {
-      // lifting only, to match the dashboard tile and the session floor; cardio and
-      // mobility are reported in their own fields below rather than counted as training
-      sessions_completed: w7.filter(w=>dayKind(w.day)==="lift").map(w=>w.day),
+      // gym and band lifting, to match the dashboard tile and the session floor; cardio
+      // and mobility are reported in their own fields below rather than counted as training
+      sessions_completed: w7.filter(w=>isTrainingKind(dayKind(w.day))).map(w=>w.day),
       volume_audit: audit,
       volume_audit_note: "sets logged in 7 days vs sets your program prescribes per week; a set counts toward every muscle group its exercise lists",
       top_lift_progressions: topLiftProgressions(7, 4),
@@ -2218,7 +2279,7 @@ function exportTables(){
     ["date","am","pm"],
     S.rehab.map(d=>[d.date, d.am?1:0, d.pm?1:0]))});
   t.push({name:"program.json", text: JSON.stringify(
-    {program:S.program, settings:S.settings}, null, 2)});
+    {program:S.program, bandProgram:S.bandProgram, settings:S.settings}, null, 2)});
   return t;
 }
 
@@ -2342,13 +2403,15 @@ document.addEventListener("click", e=>{
     save(); renderAll(); toast("Entry removed"); }
 });
 document.getElementById("resetBtn").addEventListener("click", ()=>{
-  S = structuredClone(SEED); draft = null; save(); renderAll(); toast("Demo data restored");
+  S = structuredClone(SEED); if(!S.bandProgram) S.bandProgram = [];
+  draft = null; save(); renderAll(); toast("Demo data restored");
 });
 document.getElementById("exportBtn").addEventListener("click", ()=>{
   const out = document.getElementById("exportOut");
   out.classList.toggle("hidden");
   if(!out.classList.contains("hidden"))
-    out.textContent = JSON.stringify({program:S.program, settings:S.settings}, null, 1);
+    out.textContent = JSON.stringify(
+      {program:S.program, bandProgram:S.bandProgram, settings:S.settings}, null, 1);
 });
 
 /* ---------- sync controls ---------- */
