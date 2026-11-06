@@ -65,43 +65,31 @@ device.
 
 ## Session types
 
-The session picker carries the gym program's own days, a second **band program**'s own
-days, and two fixtures that are not lifting and are not editable in either program:
+The session picker carries the program's own days plus two fixtures that are not lifting
+and are not editable in the program:
 
 - **Z2, Zone 2 cardio.** Minutes, average HR and max HR. No sets, no exercises.
 - **MOB, Mobility.** Lower body, upper body, or both.
 
-Average and max HR sit on a lifting or band session too, next to the Zone 2 minutes you
-ride after training, so a bike block logged either way records the same three numbers.
-Cardio and mobility days do not count toward the weekly session floor, which is about
-resistance training; the dashboard tile reports them beside it. They export as
-`cardio.csv` and `mobility.csv`.
+Average and max HR sit on a lifting session too, next to the Zone 2 minutes you ride after
+weights, so a bike block logged either way records the same three numbers. Cardio and
+mobility days do not count toward the weekly session floor, which is about lifting; the
+dashboard tile reports them beside it. They export as `cardio.csv` and `mobility.csv`.
 
-## Band program
+## Program
 
-Setup → Band program is a second, independent set of sessions, edited the same way as
-the gym program but never merged into it. It exists for stretches where the gym isn't
-an option — travel, a rehab block — without disturbing the gym program's own day codes,
-exercises or weekly volume targets. Band sessions log full sets and reps like a gym
-session, count toward the same weekly session floor and target, and get their own
-progression suggestions; `step` is read as the band's rated kg, so the progression note
-reads as the next band to stack once the rep range is maxed out. The two programs'
-weekly volume targets are kept separate on purpose: they represent alternatives, not an
-addition, so summing them would double-count a week where only one is actually run.
+The gym program is the Phase A hypertrophy plan: pre-Houston, upper body, two 9 kg dumbbells,
+a chair and a bed, no leg loading. It is three sessions, **HA** (push), **HB** (pull) and **HC**
+(shoulders and arms), rotated three times a week. Load is fixed, so every exercise has step 0
+and the progression note reads *add a set* once all sets reach the top of the rep range.
+Harder variations (4 s lowering, pause reps, partials) are a judgement call the app does not
+track. Edit it in Setup → Program like any program.
 
-## Hypertrophy program
-
-Setup → Hypertrophy program is a third independent set of sessions: Phase A, the pre-Houston
-upper-body block with two 9 kg dumbbells, a chair and a bed, no leg loading. It ships as
-**HA** (push), **HB** (pull) and **HC** (shoulders and arms), rotated three times a week. Load
-is fixed, so every exercise has step 0 and the progression note reads *add a set* once all
-sets hit the top of the rep range; harder variations (4 s lowering, pause reps, partials) are
-a judgement call the app does not track. Sessions count toward the weekly floor and target and
-appear under their own **Hypertrophy** group in the session picker.
-
-Its weekly volume is audited against its own sets, not the gym's, whenever the last 7 days
-include a hypertrophy session and no gym session. Devices that saved before this plan existed
-receive it once on load; deleting all three sessions on purpose is respected and not undone.
+The old Full Body A/B/C program, the band program and the separate hypertrophy copy are
+retired. Logged workouts are never rewritten: history keeps its original day codes and
+exercise names, so past lifts still feed the estimated 1RMs and exports. A device that saved
+under the old program takes the new one once on load. Mobility is no longer offered when
+logging, but mobility already logged still reads and exports as mobility.
 
 ## Supersets
 

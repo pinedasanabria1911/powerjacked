@@ -22,8 +22,6 @@ fs.writeFileSync(path.join(demoDir, 'demo.html'), shell.replace('// <<<SEED>>>',
 const demoSeed = eval(demo + '; SEED');
 const prod = {
   program: demoSeed.program,
-  bandProgram: demoSeed.bandProgram || [],
-  hyperProgram: demoSeed.hyperProgram || [],
   settings: demoSeed.settings,
   weighins: [], nutrition: [], workouts: [], rehab: [], bodycomp: [],
   meta: {createdBy: 'powerjacked', configAt: 0},
