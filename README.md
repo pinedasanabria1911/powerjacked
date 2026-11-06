@@ -65,11 +65,12 @@ device.
 
 ## Session types
 
-The session picker carries the program's own days plus two fixtures that are not lifting
-and are not editable in the program:
+The session picker carries the program's own days plus one fixture that is not lifting and
+is not editable in the program:
 
 - **Z2, Zone 2 cardio.** Minutes, average HR and max HR. No sets, no exercises.
-- **MOB, Mobility.** Lower body, upper body, or both.
+
+Mobility (**MOB**) is retired from the picker. Entries already logged still display and export.
 
 Average and max HR sit on a lifting session too, next to the Zone 2 minutes you ride after
 weights, so a bike block logged either way records the same three numbers. Cardio and
