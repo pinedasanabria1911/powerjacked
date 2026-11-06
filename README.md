@@ -89,6 +89,20 @@ reads as the next band to stack once the rep range is maxed out. The two program
 weekly volume targets are kept separate on purpose: they represent alternatives, not an
 addition, so summing them would double-count a week where only one is actually run.
 
+## Hypertrophy program
+
+Setup → Hypertrophy program is a third independent set of sessions: Phase A, the pre-Houston
+upper-body block with two 9 kg dumbbells, a chair and a bed, no leg loading. It ships as
+**HA** (push), **HB** (pull) and **HC** (shoulders and arms), rotated three times a week. Load
+is fixed, so every exercise has step 0 and the progression note reads *add a set* once all
+sets hit the top of the rep range; harder variations (4 s lowering, pause reps, partials) are
+a judgement call the app does not track. Sessions count toward the weekly floor and target and
+appear under their own **Hypertrophy** group in the session picker.
+
+Its weekly volume is audited against its own sets, not the gym's, whenever the last 7 days
+include a hypertrophy session and no gym session. Devices that saved before this plan existed
+receive it once on load; deleting all three sessions on purpose is respected and not undone.
+
 ## Supersets
 
 An exercise can be paired with the one above it, and a run of paired exercises is one

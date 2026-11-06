@@ -616,6 +616,23 @@ nav button[aria-current="true"]{background:var(--accent-soft);color:var(--accent
       </div>
 
       <div class="card">
+        <header><span class="lbl">Hypertrophy program</span><span class="note">Phase A, upper body, dumbbells</span></header>
+        <p class="hint">Phase A, pre-Houston: two 9 kg dumbbells, a chair and a bed, everything seated or
+          lying, no leg loading. Three sessions a week, rotating HA, HB, HC, never two days in a row.
+          Load stays at 9 kg, so progress comes from reps first, then an extra set, then a harder
+          variation (4 s lowering, pause reps, end-of-set partials). Past 25 reps, change the variation.
+          3 s lowering on everything, RIR 1 to 2 (last set of each isolation at 0 to 1), rest 60 to 90 s.
+          Step is 0 on purpose, so the progression note says to add a set rather than add weight.
+          Stop for neck or arm tingling, sharp wrist pain, or new calf pain or swelling on the right leg.
+          Its sets are kept apart from the gym and band volume targets.</p>
+        <div class="stack" id="hyperEdit"></div>
+        <div class="btnrow">
+          <button class="btn" id="hpSave" type="button">Save hypertrophy program</button>
+          <button class="btn ghost" id="hpAddDay" type="button">+ Session</button>
+        </div>
+      </div>
+
+      <div class="card">
         <header><span class="lbl">Sync</span><span class="note" id="syncNote">not configured</span></header>
         <p class="hint">Your data lives in a private GitHub repository. Every save commits there,
           so the repo is the record and this browser is only a cache. The token is stored on this
@@ -1119,6 +1136,186 @@ const SEED = {
    ]
   }
  ],
+ "hyperProgram": [
+  {
+   "id": "HA",
+   "name": "Hypertrophy A (push)",
+   "ex": [
+    {
+     "name": "Lying Single-Arm DB Press (pronated grip, 1s pause)",
+     "sets": 3,
+     "lo": 10,
+     "hi": 20,
+     "group": "Chest",
+     "step": 0
+    },
+    {
+     "name": "Seated Single-Arm Overhead DB Press",
+     "sets": 3,
+     "lo": 8,
+     "hi": 15,
+     "group": "Shoulders",
+     "step": 0
+    },
+    {
+     "name": "Seated Lateral Raise (slight forward lean)",
+     "sets": 4,
+     "lo": 15,
+     "hi": 25,
+     "group": "Lateral delts",
+     "step": 0
+    },
+    {
+     "name": "Single-DB Svend Press",
+     "sets": 3,
+     "lo": 15,
+     "hi": 25,
+     "group": "Chest",
+     "step": 0
+    },
+    {
+     "name": "Seated Overhead Single-DB Triceps Extension (both hands)",
+     "sets": 3,
+     "lo": 12,
+     "hi": 20,
+     "group": "Triceps",
+     "step": 0
+    },
+    {
+     "name": "Lying DB Crunch",
+     "sets": 3,
+     "lo": 12,
+     "hi": 20,
+     "group": "Abs",
+     "step": 0
+    }
+   ]
+  },
+  {
+   "id": "HB",
+   "name": "Hypertrophy B (pull)",
+   "ex": [
+    {
+     "name": "Seated Single-Arm DB Row (free hand braced)",
+     "sets": 4,
+     "lo": 10,
+     "hi": 20,
+     "group": "Back",
+     "step": 0
+    },
+    {
+     "name": "Lying DB Pullover",
+     "sets": 3,
+     "lo": 12,
+     "hi": 15,
+     "group": "Back",
+     "step": 0
+    },
+    {
+     "name": "Seated Bent-Over Reverse Fly",
+     "sets": 3,
+     "lo": 15,
+     "hi": 25,
+     "group": "Rear delts",
+     "step": 0
+    },
+    {
+     "name": "Seated Supinated DB Curl",
+     "sets": 3,
+     "lo": 10,
+     "hi": 15,
+     "group": "Biceps",
+     "step": 0
+    },
+    {
+     "name": "Seated Hammer Curl",
+     "sets": 3,
+     "lo": 10,
+     "hi": 15,
+     "group": "Biceps",
+     "step": 0
+    },
+    {
+     "name": "Side-Lying DB External Rotation",
+     "sets": 2,
+     "lo": 15,
+     "hi": 15,
+     "group": "Rotator cuff",
+     "step": 0
+    },
+    {
+     "name": "Seated DB Side Bend",
+     "sets": 3,
+     "lo": 15,
+     "hi": 15,
+     "group": "Obliques",
+     "step": 0
+    }
+   ]
+  },
+  {
+   "id": "HC",
+   "name": "Hypertrophy C (shoulders and arms)",
+   "ex": [
+    {
+     "name": "Lying Two-Arm DB Press (pronated grip, 1s pause)",
+     "sets": 3,
+     "lo": 12,
+     "hi": 20,
+     "group": "Chest",
+     "step": 0
+    },
+    {
+     "name": "Seated Two-Arm Bent-Over Row",
+     "sets": 3,
+     "lo": 12,
+     "hi": 20,
+     "group": "Back",
+     "step": 0
+    },
+    {
+     "name": "Seated Lateral Raise (5-8 partials to finish)",
+     "sets": 3,
+     "lo": 15,
+     "hi": 25,
+     "group": "Lateral delts",
+     "step": 0
+    },
+    {
+     "name": "Seated High-Elbow Rear Delt Row",
+     "sets": 3,
+     "lo": 15,
+     "hi": 20,
+     "group": "Rear delts",
+     "step": 0
+    },
+    {
+     "name": "Lying Single-DB Triceps Extension (both hands)",
+     "sets": 3,
+     "lo": 12,
+     "hi": 20,
+     "group": "Triceps",
+     "step": 0
+    },
+    {
+     "name": "Seated Alternating DB Curl",
+     "sets": 3,
+     "lo": 10,
+     "hi": 15,
+     "group": "Biceps",
+     "step": 0
+    },
+    {
+     "name": "Lying DB Crunch",
+     "sets": 3,
+     "lo": 12,
+     "hi": 20,
+     "group": "Abs",
+     "step": 0
+    }
+   ]
+  }
+ ],
  "settings": {
   "phaseName": "Band block",
   "mode": "maintain",
@@ -1168,6 +1365,9 @@ S = load();
 if(!S.meta) S.meta = {};
 if(!S.rehab) S.rehab = [];
 if(!S.bandProgram) S.bandProgram = [];
+// The hypertrophy plan arrived after some devices had already saved. undefined means this
+// state never had one, so it takes the shipped plan once; [] means it was deleted on purpose.
+if(S.hyperProgram === undefined) S.hyperProgram = structuredClone(SEED.hyperProgram || []);
 
 /* ---------- helpers ---------- */
 const byDateAsc = (a,b)=> a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
@@ -1213,14 +1413,18 @@ const EXTRA_DAYS = [
 // the band program is a second, independent set of sessions (its own days, its own
 // exercises) kept apart from the gym program so neither one's weekly volume target
 // or "not logged" flags get diluted by the other
-const dayDef = id => S.program.find(d=>d.id===id) || (S.bandProgram||[]).find(d=>d.id===id)
+// The hypertrophy plan is a third such set: the upper-body, dumbbell-only phase with no
+// leg loading. Same rule for it as for band: its own codes, its own volume, never merged.
+const extraPrograms = () => [...(S.bandProgram||[]), ...(S.hyperProgram||[])];
+const dayDef = id => S.program.find(d=>d.id===id) || extraPrograms().find(d=>d.id===id)
   || EXTRA_DAYS.find(d=>d.id===id);
 // a program day always wins the id, so a collision costs the fixture, never the program
 const dayKind = id => S.program.some(d=>d.id===id) ? "lift"
   : (S.bandProgram||[]).some(d=>d.id===id) ? "band"
+  : (S.hyperProgram||[]).some(d=>d.id===id) ? "hyper"
   : (EXTRA_DAYS.find(d=>d.id===id) || {}).kind || "lift";
-// both "lift" and "band" days log real sets and count toward the session floor/target
-const isTrainingKind = k => k === "lift" || k === "band";
+// "lift", "band" and "hyper" days all log real sets and count toward the session floor/target
+const isTrainingKind = k => k === "lift" || k === "band" || k === "hyper";
 function mobilityText(w){
   const p = [];
   if(w.mobility && w.mobility.lower) p.push("lower");
@@ -1301,7 +1505,7 @@ const lastSessionFor = id => [...S.workouts].reverse().find(w=>w.day===id) || nu
 // Reps-first: max the range across every set, then add a set, then add load.
 function progressionCalls(){
   const out = [];
-  [...S.program, ...(S.bandProgram||[])].forEach(day=>{
+  [...S.program, ...extraPrograms()].forEach(day=>{
     const s = lastSessionFor(day.id); if(!s) return;
     day.ex.forEach(def=>{
       const e = s.exercises.find(x=>x.name===def.name);
@@ -1455,7 +1659,10 @@ function renderOverview(){
   const all7 = S.workouts.filter(w=>w.date >= t0);
   const w7 = all7.filter(w=>isTrainingKind(dayKind(w.day)));
   const bandCt = all7.filter(w=>dayKind(w.day)==="band").length;
-  const gymBandSplit = bandCt ? " (gym "+(w7.length-bandCt)+", band "+bandCt+")" : "";
+  const hyperCt = all7.filter(w=>dayKind(w.day)==="hyper").length;
+  const gymBandSplit = (bandCt || hyperCt)
+    ? " (gym "+(w7.length-bandCt-hyperCt) + (bandCt ? ", band "+bandCt : "")
+      + (hyperCt ? ", hypertrophy "+hyperCt : "") + ")" : "";
   const extra7 = [["cardio","cardio"],["mobility","mobility"]]
     .map(([k,lbl])=>{ const n = all7.filter(w=>dayKind(w.day)===k).length;
       return n ? "+"+n+" "+lbl : ""; }).filter(Boolean).join(", ");
@@ -1626,14 +1833,17 @@ function buildDraft(dayId, prefill){
 function renderDaySelect(){
   const sel = document.getElementById("tDay"), keep = sel.value;
   const opt = d => `<option value="${esc(d.id)}">${esc(d.id)} · ${esc(d.name)}</option>`;
-  const band = S.bandProgram || [];
-  const extra = EXTRA_DAYS.filter(x=> !S.program.some(d=>d.id===x.id) && !band.some(d=>d.id===x.id));
-  sel.innerHTML = (band.length ? `<optgroup label="Gym">${S.program.map(opt).join("")}</optgroup>`
+  const band = S.bandProgram || [], hyper = S.hyperProgram || [];
+  const extra = EXTRA_DAYS.filter(x=> !S.program.some(d=>d.id===x.id)
+    && !band.some(d=>d.id===x.id) && !hyper.some(d=>d.id===x.id));
+  const others = band.length || hyper.length;
+  sel.innerHTML = (others ? `<optgroup label="Gym">${S.program.map(opt).join("")}</optgroup>`
       : S.program.map(opt).join(""))
     + (band.length ? `<optgroup label="Band">${band.map(opt).join("")}</optgroup>` : "")
+    + (hyper.length ? `<optgroup label="Hypertrophy">${hyper.map(opt).join("")}</optgroup>` : "")
     + (extra.length ? `<optgroup label="Not lifting">${extra.map(opt).join("")}</optgroup>` : "");
-  if(S.program.some(d=>d.id===keep) || band.some(d=>d.id===keep) || extra.some(d=>d.id===keep))
-    sel.value = keep;
+  if(S.program.some(d=>d.id===keep) || band.some(d=>d.id===keep) || hyper.some(d=>d.id===keep)
+    || extra.some(d=>d.id===keep)) sel.value = keep;
 }
 function renderTraining(){
   renderDaySelect();
@@ -1809,7 +2019,7 @@ function mainGroup(g){
 function exerciseGroups(){
   const idx = new Map();
   S.program.forEach(d=> d.ex.forEach(x=>{ if(!idx.has(x.name)) idx.set(x.name, mainGroup(x.group)); }));
-  (S.bandProgram||[]).forEach(d=> d.ex.forEach(x=>{ if(!idx.has(x.name)) idx.set(x.name, mainGroup(x.group)); }));
+  extraPrograms().forEach(d=> d.ex.forEach(x=>{ if(!idx.has(x.name)) idx.set(x.name, mainGroup(x.group)); }));
   S.workouts.forEach(w=> w.exercises.forEach(e=>{ if(!idx.has(e.name)) idx.set(e.name, "Off the program"); }));
   return idx;
 }
@@ -1925,11 +2135,12 @@ function renderSetup(){
 
   document.getElementById("progEdit").innerHTML = programEditorHTML(S.program);
   document.getElementById("bandEdit").innerHTML = programEditorHTML(S.bandProgram||[]);
+  document.getElementById("hyperEdit").innerHTML = programEditorHTML(S.hyperProgram||[]);
 
   // flag anything on the permanent exclusion list, in either program
   const excl = (s.excluded||[]).map(e=>e.toLowerCase().trim()).filter(Boolean);
   const hits = [];
-  [...S.program, ...(S.bandProgram||[])].forEach(d=>d.ex.forEach(x=>{
+  [...S.program, ...extraPrograms()].forEach(d=>d.ex.forEach(x=>{
     const nm = x.name.toLowerCase();
     excl.forEach(e=>{ if(e && nm.includes(e)) hits.push(x.name+" in "+d.id); });
   }));
@@ -2264,9 +2475,13 @@ function wireProgramEditor(containerId, addBtnId, saveBtnId, getArr, getOther, d
   });
 }
 wireProgramEditor("progEdit", "pAddDay", "pSave",
-  ()=>S.program, ()=>S.bandProgram||[], "Full Body", "Program saved");
+  ()=>S.program, extraPrograms, "Full Body", "Program saved");
 wireProgramEditor("bandEdit", "bpAddDay", "bpSave",
-  ()=>(S.bandProgram || (S.bandProgram = [])), ()=>S.program, "Band", "Band program saved");
+  ()=>(S.bandProgram || (S.bandProgram = [])),
+  ()=>[...S.program, ...(S.hyperProgram||[])], "Band", "Band program saved");
+wireProgramEditor("hyperEdit", "hpAddDay", "hpSave",
+  ()=>(S.hyperProgram || (S.hyperProgram = [])),
+  ()=>[...S.program, ...(S.bandProgram||[])], "Hypertrophy", "Hypertrophy program saved");
 
 /* =========================================================================
    GITHUB SYNC
@@ -2351,6 +2566,8 @@ function mergeState(local, remote){
   // program, band program and settings are whole-document; keep whichever was edited last
   if((remote.meta && remote.meta.configAt || 0) > (local.meta && local.meta.configAt || 0)){
     out.program = remote.program; out.bandProgram = remote.bandProgram || [];
+    // a remote written before the hypertrophy plan existed must not erase it here
+    if(remote.hyperProgram !== undefined) out.hyperProgram = remote.hyperProgram;
     out.settings = remote.settings;
   }
   return out;
@@ -2385,12 +2602,12 @@ function renderSync(){
 
 // everything that matters for equality, excluding the write timestamp
 function fingerprint(o){
-  return JSON.stringify([o.program, o.bandProgram, o.settings, o.weighins, o.nutrition,
+  return JSON.stringify([o.program, o.bandProgram, o.hyperProgram, o.settings, o.weighins, o.nutrition,
     o.workouts, o.rehab, o.bodycomp]);
 }
 function stateForSync(){
-  return {program:S.program, bandProgram:S.bandProgram, settings:S.settings,
-    weighins:S.weighins, nutrition:S.nutrition,
+  return {program:S.program, bandProgram:S.bandProgram, hyperProgram:S.hyperProgram,
+    settings:S.settings, weighins:S.weighins, nutrition:S.nutrition,
     workouts:S.workouts, rehab:S.rehab, bodycomp:S.bodycomp,
     meta: Object.assign({}, S.meta, {writtenAt: new Date().toISOString()})};
 }
@@ -2475,9 +2692,16 @@ const groupsOf = ex => String(ex.group||"").replace(/\([^)]*\)/g,"")
 // the gym week, so summing both would double the target while you are only running
 // one of them. During a band-only stretch this will read every gym group as short;
 // that is expected, not a bug.
-function weeklyVolumeTargets(){
+// The exception is the hypertrophy plan: when the window trained it and never touched a gym
+// day, its own weekly sets are the target, otherwise Phase A would read as short on every
+// leg group for a block that has no leg loading by design.
+function weeklyVolumeTargets(days){
   const t = {};
-  S.program.forEach(d=>d.ex.forEach(x=>
+  const from = shiftDays(todayISO(), -((days||7)-1));
+  const kinds = new Set(S.workouts.filter(w=>w.date>=from).map(w=>dayKind(w.day)));
+  const prog = kinds.has("hyper") && !kinds.has("lift") && (S.hyperProgram||[]).length
+    ? S.hyperProgram : S.program;
+  prog.forEach(d=>d.ex.forEach(x=>
     groupsOf(x).forEach(g=>{ t[g] = (t[g]||0) + (Number(x.sets)||0); })));
   return t;
 }
@@ -2491,7 +2715,7 @@ function volumeAudit(days){
       groupsOf(d || {group:""}).forEach(g=>{ done[g] = (done[g]||0) + e.sets.length; });
     });
   });
-  const target = weeklyVolumeTargets(), out = {};
+  const target = weeklyVolumeTargets(days), out = {};
   Object.keys(target).sort().forEach(g=>{ out[g] = {sets: done[g]||0, target: target[g]}; });
   Object.keys(done).forEach(g=>{ if(!(g in out)) out[g] = {sets: done[g], target: 0}; });
   return out;
@@ -2550,10 +2774,13 @@ function buildSummary(){
   // gym stays the default when neither was touched, matching the old behavior
   const gymDone = w7.some(w=>dayKind(w.day)==="lift");
   const bandDone = w7.some(w=>dayKind(w.day)==="band");
-  if(gymDone || !bandDone) S.program.forEach(d=>{ if(!doneIds.has(d.id))
+  const hyperDone = w7.some(w=>dayKind(w.day)==="hyper");
+  if(gymDone || (!bandDone && !hyperDone)) S.program.forEach(d=>{ if(!doneIds.has(d.id))
     flags.push("Session " + d.id + " (" + d.name + ") not logged in the last 7 days"); });
   if(bandDone) (S.bandProgram||[]).forEach(d=>{ if(!doneIds.has(d.id))
     flags.push("Band session " + d.id + " (" + d.name + ") not logged in the last 7 days"); });
+  if(hyperDone) (S.hyperProgram||[]).forEach(d=>{ if(!doneIds.has(d.id))
+    flags.push("Hypertrophy session " + d.id + " (" + d.name + ") not logged in the last 7 days"); });
   const fullRehab = r7.filter(d=>d.am && d.pm).length;
   if(fullRehab < r7.length)
     flags.push("Achilles eccentrics completed both doses on " + fullRehab + "/" + r7.length + " days");
@@ -2727,7 +2954,8 @@ function exportTables(){
     ["date","am","pm"],
     S.rehab.map(d=>[d.date, d.am?1:0, d.pm?1:0]))});
   t.push({name:"program.json", text: JSON.stringify(
-    {program:S.program, bandProgram:S.bandProgram, settings:S.settings}, null, 2)});
+    {program:S.program, bandProgram:S.bandProgram, hyperProgram:S.hyperProgram,
+       settings:S.settings}, null, 2)});
   return t;
 }
 
@@ -2851,7 +3079,7 @@ document.addEventListener("click", e=>{
     save(); renderAll(); toast("Entry removed"); }
 });
 document.getElementById("resetBtn").addEventListener("click", ()=>{
-  S = structuredClone(SEED); if(!S.bandProgram) S.bandProgram = [];
+  S = structuredClone(SEED); if(!S.bandProgram) S.bandProgram = []; if(!S.hyperProgram) S.hyperProgram = [];
   draft = null; save(); renderAll(); toast("Demo data restored");
 });
 document.getElementById("exportBtn").addEventListener("click", ()=>{
@@ -2859,7 +3087,8 @@ document.getElementById("exportBtn").addEventListener("click", ()=>{
   out.classList.toggle("hidden");
   if(!out.classList.contains("hidden"))
     out.textContent = JSON.stringify(
-      {program:S.program, bandProgram:S.bandProgram, settings:S.settings}, null, 1);
+      {program:S.program, bandProgram:S.bandProgram, hyperProgram:S.hyperProgram,
+       settings:S.settings}, null, 1);
 });
 
 /* ---------- sync controls ---------- */
