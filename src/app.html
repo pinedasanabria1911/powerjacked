@@ -711,10 +711,11 @@ function save(){ saveLocal(); if(typeof schedulePush === "function") schedulePus
 S = load();
 if(!S.meta) S.meta = {};
 if(!S.rehab) S.rehab = [];
+// v3 restores the A1/A2-style superset pairs. v2 replaced the gym program with the Phase A plan.
 // The gym program was replaced by the Phase A hypertrophy plan. A device that saved under
 // the old program takes the new one once and drops the retired band and hypertrophy copies.
 // Logged workouts are never touched: they carry their own day code and exercise names.
-const PROGRAM_V = 2;
+const PROGRAM_V = 3;
 if(S.meta.programV !== PROGRAM_V){
   S.program = structuredClone(SEED.program);
   delete S.bandProgram; delete S.hyperProgram;
