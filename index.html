@@ -730,8 +730,7 @@ const SEED = {
      "lo": 8,
      "hi": 15,
      "group": "Shoulders",
-     "step": 0,
-     "ss": true
+     "step": 0
     },
     {
      "name": "Seated Lateral Raise (slight forward lean)",
@@ -747,8 +746,7 @@ const SEED = {
      "lo": 15,
      "hi": 25,
      "group": "Chest",
-     "step": 0,
-     "ss": true
+     "step": 0
     },
     {
      "name": "Seated Overhead Single-DB Triceps Extension (both hands)",
@@ -764,8 +762,7 @@ const SEED = {
      "lo": 12,
      "hi": 20,
      "group": "Abs",
-     "step": 0,
-     "ss": true
+     "step": 0
     }
    ]
   },
@@ -787,8 +784,7 @@ const SEED = {
      "lo": 12,
      "hi": 15,
      "group": "Back",
-     "step": 0,
-     "ss": true
+     "step": 0
     },
     {
      "name": "Seated Bent-Over Reverse Fly",
@@ -804,8 +800,7 @@ const SEED = {
      "lo": 10,
      "hi": 15,
      "group": "Biceps",
-     "step": 0,
-     "ss": true
+     "step": 0
     },
     {
      "name": "Seated Hammer Curl",
@@ -821,8 +816,7 @@ const SEED = {
      "lo": 15,
      "hi": 15,
      "group": "Rotator cuff",
-     "step": 0,
-     "ss": true
+     "step": 0
     },
     {
      "name": "Seated DB Side Bend",
@@ -852,8 +846,7 @@ const SEED = {
      "lo": 12,
      "hi": 20,
      "group": "Back",
-     "step": 0,
-     "ss": true
+     "step": 0
     },
     {
      "name": "Seated Lateral Raise (5-8 partials to finish)",
@@ -869,8 +862,7 @@ const SEED = {
      "lo": 15,
      "hi": 20,
      "group": "Rear delts",
-     "step": 0,
-     "ss": true
+     "step": 0
     },
     {
      "name": "Lying Single-DB Triceps Extension (both hands)",
@@ -886,8 +878,7 @@ const SEED = {
      "lo": 10,
      "hi": 15,
      "group": "Biceps",
-     "step": 0,
-     "ss": true
+     "step": 0
     },
     {
      "name": "Lying DB Crunch",
@@ -948,11 +939,11 @@ function save(){ saveLocal(); if(typeof schedulePush === "function") schedulePus
 S = load();
 if(!S.meta) S.meta = {};
 if(!S.rehab) S.rehab = [];
-// v3 restores the A1/A2-style superset pairs. v2 replaced the gym program with the Phase A plan.
+// v4 removes the trial superset pairs (v3): the Phase A sessions are straight sets. v2 replaced the gym program with the Phase A plan.
 // The gym program was replaced by the Phase A hypertrophy plan. A device that saved under
 // the old program takes the new one once and drops the retired band and hypertrophy copies.
 // Logged workouts are never touched: they carry their own day code and exercise names.
-const PROGRAM_V = 3;
+const PROGRAM_V = 4;
 if(S.meta.programV !== PROGRAM_V){
   S.program = structuredClone(SEED.program);
   delete S.bandProgram; delete S.hyperProgram;
