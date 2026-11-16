@@ -571,12 +571,16 @@ nav button[aria-current="true"]{background:var(--accent-soft);color:var(--accent
 
       <div class="card">
         <header><span class="lbl">Program</span><span class="note">order is training order</span></header>
-        <p class="hint">Phase A, pre-Houston upper body: two 9 kg dumbbells, a chair and a bed, no leg
-          loading. Rotate HA, HB, HC three times a week, never two days in a row. Load stays at 9 kg,
-          so step is 0 and progress is reps first, then an extra set, then a harder variation (4 s
-          lowering, pause reps, end-of-set partials); past 25 reps, change the variation. 3 s lowering
-          throughout, RIR 1 to 2, rest 60 to 90 s. Stop for neck or arm tingling, sharp wrist pain, or
-          new calf pain or swelling on the right leg.</p>
+        <p class="hint">Phase A, pre-Houston upper body (Nov 12 to Nov 30, 2026): two 9 kg dumbbells, a
+          chair and a bed, no leg loading. Rotate A, B, C three times a week with a rest day between
+          when possible; two sessions is the floor. Antagonist or non-competing pairs are supersets.
+          Load stays at 9 kg, so step is 0 and progress is reps first: when every set hits the top of
+          the range, make it harder (4 s lowering, pause reps, end-of-set partials, the combined bell
+          for single-arm work) and do not add sets in this phase. 3 s lowering throughout, RIR 1 to 2.
+          Rest 2 min after a straight compound, 90 s after a pair with a compound, 60 s after an
+          isolation pair. Stop for neck or arm tingling, sharp wrist pain, or new calf pain or
+          swelling on the right leg. Volume is a deliberate exception below the usual 10 sets per
+          muscle and rises in Houston Block A.</p>
         <p class="hint">Sets is the planned count. Low and high are the rep range the progression
           rule reads. Step is the load jump to take once the range is maxed out.
           <b>Superset</b> pairs an exercise with the one above it, and every session logged
@@ -711,11 +715,11 @@ function save(){ saveLocal(); if(typeof schedulePush === "function") schedulePus
 S = load();
 if(!S.meta) S.meta = {};
 if(!S.rehab) S.rehab = [];
-// v4 removes the trial superset pairs (v3): the Phase A sessions are straight sets. v2 replaced the gym program with the Phase A plan.
+// v5 is the 2026-11-16 Phase A plan: antagonist supersets, external rotation at 3 sets. v2 replaced the gym program with the Phase A plan.
 // The gym program was replaced by the Phase A hypertrophy plan. A device that saved under
 // the old program takes the new one once and drops the retired band and hypertrophy copies.
 // Logged workouts are never touched: they carry their own day code and exercise names.
-const PROGRAM_V = 4;
+const PROGRAM_V = 5;
 if(S.meta.programV !== PROGRAM_V){
   S.program = structuredClone(SEED.program);
   delete S.bandProgram; delete S.hyperProgram;

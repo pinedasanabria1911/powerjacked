@@ -79,12 +79,17 @@ dashboard tile reports them beside it. They export as `cardio.csv` and `mobility
 
 ## Program
 
-The gym program is the Phase A hypertrophy plan: pre-Houston, upper body, two 9 kg dumbbells,
-a chair and a bed, no leg loading. It is three sessions, **HA** (push), **HB** (pull) and **HC**
-(shoulders and arms), rotated three times a week. Load is fixed, so every exercise has step 0
-and the progression note reads *add a set* once all sets reach the top of the rep range.
-Harder variations (4 s lowering, pause reps, partials) are a judgement call the app does not
-track. Edit it in Setup → Program like any program.
+The gym program is the Phase A plan (Nov 12 to Nov 30, 2026, last updated 2026-11-16): pre-Houston,
+upper body, two 9 kg dumbbells, a chair and a bed, no leg loading. It is three sessions, **A** (push),
+**B** (pull) and **C** (shoulders and arms), stored under the day codes `HA`, `HB` and `HC` so earlier
+logs keep matching. Rotate them three times a week; two is the floor. Antagonist or non-competing
+exercises are paired as supersets (A: crunch with the lying press, triceps with lateral raises;
+B: external rotation with the pullover, curl with the reverse fly, side bend with the hammer curl;
+C: row with the press, curl with the lateral raise, crunch with the triceps extension). Load is fixed,
+so every exercise has step 0 and progress is reps first, then a harder variation (4 s lowering, pause
+reps, partials, the combined bell). The plan adds no sets in this phase, and the app does not track
+those variations. Weekly direct sets sit at about 6 to 9 per muscle, a deliberate time-limited
+exception that Houston Block A raises. Edit it in Setup → Program like any program.
 
 The old Full Body A/B/C program, the band program and the separate hypertrophy copy are
 retired. Logged workouts are never rewritten: history keeps its original day codes and
